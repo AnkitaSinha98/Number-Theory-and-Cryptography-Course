@@ -1,0 +1,324 @@
+CAN USE import sys, threading AND import math
+
+RSA(1):
+
+sys.setrecursionlimit(10**7)
+threading.stack_size(2**27)
+
+def ConvertToInt(message_str):
+  res = 0
+  for i in range(len(message_str)):
+    res = res * 256 + ord(message_str[i])
+  return res
+  
+def PowMod(a, n, mod): # Converts message(int), exponent, public key to ciphertext 
+    if n == 0:
+        return 1 % mod
+    elif n == 1:
+        return a % mod
+    else:
+        b = PowMod(a, n // 2, mod)
+        b = b * b % mod
+        if n % 2 == 0:
+          return b
+        else:
+          return b * a % mod
+
+def Encrypt(message, modulo, exponent):
+  return PowMod(ConvertToInt(message), exponent, modulo)
+  
+ RSA(2):
+ 
+ def ExtendedEuclid(a, b):
+    if b == 0:
+        return (1, 0)
+    (x, y) = ExtendedEuclid(b, a % b)
+    k = a // b
+    return (y, x - k * y)
+
+def InvertModulo(a, n):
+    (b, x) = ExtendedEuclid(a, n)
+    if b < 0:
+        b = (b % n + n) % n
+    return b
+
+def PowMod(a, n, mod):
+    if n == 0:
+        return 1 % mod
+    elif n == 1:
+        return a % mod
+    else:
+        b = PowMod(a, n // 2, mod)
+        b = b * b % mod
+        if n % 2 == 0:
+          return b
+        else:
+          return b * a % mod
+
+def ConvertToStr(n):
+    res = ""
+    while n > 0:
+        res += chr(n % 256)
+        n //= 256
+    return res[::-1]
+
+def Encrypt(message, modulo, exponent):
+  return PowMod(ConvertToInt(message), exponent, modulo)
+
+def Decrypt(ciphertext, p, q, exponent): 
+  #Fix this code
+  number = (p-1)*(q-1)
+  d = InvertModulo(exponent, number)
+  return ConvertToStr(PowMod(ciphertext, d, p * q )) 
+
+a = 3
+b = 7
+c = InvertModulo(a, b)
+print(c)
+
+p = 1000000007
+q = 1000000009
+exponent = 23917
+modulo = p * q
+ciphertext = Encrypt("attack", modulo, exponent)
+message = Decrypt(ciphertext, p, q, exponent)
+print(message) 
+
+
+RSA(3):
+
+def PowMod(a, n, mod):
+    if n == 0:
+        return 1 % mod
+    elif n == 1:
+        return a % mod
+    else:
+        b = PowMod(a, n // 2, mod)
+        b = b * b % mod
+        if n % 2 == 0:
+          return b
+        else:
+          return b * a % mod
+
+def ConvertToInt(message_str):
+  res = 0
+  for i in range(len(message_str)):
+    res = res * 256 + ord(message_str[i])
+  return res
+
+def Encrypt(message, modulo, exponent):
+  return PowMod(ConvertToInt(message), exponent, modulo)
+
+def DecipherSimple(ciphertext, modulo, exponent, potential_messages): 
+  for i in range(len(potential_messages)):
+    if ciphertext == Encrypt(potential_messages[i], modulo, exponent):
+      return potential_messages[i]
+  return "don't know"
+
+modulo = 101
+exponent = 12
+ciphertext = Encrypt("attack", modulo, exponent)
+print(ciphertext)
+print(DecipherSimple(ciphertext, modulo, exponent, ["attack", "don't attack", "wait"]))
+
+RSA(4):
+
+  
+def DecipherSmallPrime(ciphertext, modulo, exponent):
+  
+  if modulo % 2 == 0:
+    small_prime = 2
+    big_prime = modulo // 2
+    return Decrypt(ciphertext, small_prime, big_prime, exponent) 
+  
+  for i in range(3, 1000000, 2):
+    if modulo % i == 0:
+      small_prime = i
+      big_prime = modulo // i
+      return Decrypt(ciphertext, small_prime, big_prime, exponent) 
+  
+modulo = 101 * 18298970732541109011012304219376080251334480295537316123696052970419466495220522723330315111017831737980079504337868198011077274303193766040393009648852841770668239779097280026631944319501437547002412556176186750790476901358334138818777298389724049250700606462316428106882097210008142941838672676714188593227684360287806974345181893018133710957167334490627178666071809992955566020058374505477745993383434501768887090900283569055646901291270870833498474402084748161755197005050874785474707550376333429671113753137201128897550014524209754619355308207537703754006699795711188492048286436285518105948050401762394690148387
+exponent = 239
+ciphertext = Encrypt("attack", modulo, exponent) 
+print(ciphertext)
+print(DecipherSmallPrime(ciphertext, modulo, exponent))
+
+RSA(5):
+
+sys.setrecursionlimit(10**7)
+threading.stack_size(2**27)
+
+def ConvertToInt(message_str):
+  res = 0
+  for i in range(len(message_str)):
+    res = res * 256 + ord(message_str[i])
+  return res
+
+def ConvertToStr(n):
+    res = ""
+    while n > 0:
+        res += chr(n % 256)
+        n //= 256
+    return res[::-1]
+
+def PowMod(a, n, mod):
+    if n == 0:
+        return 1 % mod
+    elif n == 1:
+        return a % mod
+    else:
+        b = PowMod(a, n // 2, mod)
+        b = b * b % mod
+        if n % 2 == 0:
+          return b
+        else:
+          return b * a % mod
+
+def ExtendedEuclid(a, b):
+    if b == 0:
+        return (1, 0)
+    (x, y) = ExtendedEuclid(b, a % b)
+    k = a // b
+    return (y, x - k * y)
+
+def InvertModulo(a, n):
+    (b, x) = ExtendedEuclid(a, n)
+    if b < 0:
+        b = (b % n + n) % n
+    return b
+
+def Encrypt(message, modulo, exponent):
+  return PowMod(ConvertToInt(message), exponent, modulo)
+  
+def Decrypt(ciphertext, p, q, exponent):
+  number = (p-1)*(q-1)
+  d = InvertModulo(exponent, number)
+  return ConvertToStr(PowMod(ciphertext, d, p * q ))
+
+def DecipherSmallPrime(ciphertext, modulo, exponent):
+  
+  if modulo % 2 == 0:
+    small_prime = 2
+    big_prime = modulo // 2
+    return Decrypt(ciphertext, small_prime, big_prime, exponent)
+  
+  for i in range(3, 1000000, 2):
+    if modulo % i == 0:
+      small_prime = i
+      big_prime = modulo // i
+      return Decrypt(ciphertext, small_prime, big_prime, exponent) 
+  return "don't know"
+
+def IntSqrt(x):
+    n = int(x)
+    if n <= 1:
+        return n  # handle sqrt(0)==0, sqrt(1)==1
+    r = 1 << ((n.bit_length() + 1) >> 1)
+    while True:
+        newr = (r + n // r) >> 1 
+        if newr >= r:
+            return r
+        r = newr
+
+def DecipherSmallDiff(ciphertext, modulo, exponent):
+  low = IntSqrt(n) - 5000
+  high = IntSqrt(n)+1
+  for i in range(low,high+1):
+    if modulo % i == 0:
+      small_prime = i
+      big_prime = modulo // small_prime
+      return Decrypt(ciphertext, small_prime, big_prime, exponent)
+  
+p = 1000000007
+q = 1000000009
+n = p * q
+e = 239
+ciphertext = Encrypt("attack", n, e)
+message = DecipherSmallDiff(ciphertext, n, e)
+print(ciphertext)
+print(message)
+
+RSA(6):
+
+def GCD(a, b):
+  if b == 0:
+    return a
+  return GCD(b, a % b)
+  
+def DecipherCommonDivisor(first_ciphertext, first_modulo, first_exponent, second_ciphertext, second_modulo, second_exponent):
+  common_prime = GCD(first_modulo,second_modulo)
+  q1 = first_modulo // common_prime
+  q2 = second_modulo // common_prime
+  return (Decrypt(first_ciphertext, common_prime, q1, first_exponent), Decrypt(second_ciphertext, common_prime, q2, second_exponent))
+  return ("unknown message 1", "unknown message 2")
+  
+# Example usage with common prime p and different second primes q1 and q2  
+p = 101
+q1 = 18298970732541109011012304219376080251334480295537316123696052970419466495220522723330315111017831737980079504337868198011077274303193766040393009648852841770668239779097280026631944319501437547002412556176186750790476901358334138818777298389724049250700606462316428106882097210008142941838672676714188593227684360287806974345181893018133710957167334490627178666071809992955566020058374505477745993383434501768887090900283569055646901291270870833498474402084748161755197005050874785474707550376333429671113753137201128897550014524209754619355308207537703754006699795711188492048286436285518105948050401762394690148387
+q2 = 1000000007
+first_modulo = p * q1
+second_modulo = p * q2
+first_exponent = 239
+second_exponent = 17
+first_ciphertext = Encrypt("attack", first_modulo, first_exponent)
+second_ciphertext = Encrypt("wait", second_modulo, second_exponent)
+print(DecipherCommonDivisor(first_ciphertext, first_modulo, first_exponent, second_ciphertext, second_modulo, second_exponent))
+
+RSA(7):
+
+def ConvertToStr(n):
+    res = ""
+    while n > 0:
+        res += chr(n % 256)
+        n //= 256
+    return res[::-1]
+    
+def gcd(a, b):
+  if b==0:
+    return a
+  return gcd(b,a%b)
+  
+def ex_gcd(a,b):
+  if a==0:
+    return (0,1)
+  (x,y) = ex_gcd(b%a,a)
+  return ((y - (b//a) *x) , x)
+  
+def diophantine(a, b, c):
+  d = gcd(a,b)
+  a1 = a//d
+  b1 = b//d
+  c1 = c//d
+  (x,y) = ex_gcd(a1,b1)
+  return (c1*x , c1*y)
+
+
+def ChineseRemainderTheorem(n1, r1, n2, r2):
+  (x, y) = diophantine(n1, n2,1)
+  return ((n1*x*r2) + (n2*y*r1))%(n1*n2)
+
+def IntSqrt(x):
+    n = int(x)
+    if n <= 1:
+        return n  
+    r = 1 << ((n.bit_length() + 1) >> 1)
+    while True:
+        newr = (r + n // r) >> 1 
+        if newr >= r:
+            return r
+        r = newr
+
+def DecipherHastad(first_ciphertext, first_modulo, second_ciphertext, second_modulo):
+  r = ChineseRemainderTheorem(first_modulo, first_ciphertext, second_modulo, second_ciphertext)
+  return ConvertToStr(IntSqrt(r))
+  
+p1 = 790383132652258876190399065097
+q1 = 662503581792812531719955475509
+p2 = 656917682542437675078478868539
+q2 = 1263581691331332127259083713503
+n1 = p1 * q1
+n2 = p2 * q2
+ciphertext1 = Encrypt("attack", n1, 2)
+ciphertext2 = Encrypt("attack", n2, 2)
+message = DecipherHastad(ciphertext1, n1, ciphertext2, n2)
+print(message)
