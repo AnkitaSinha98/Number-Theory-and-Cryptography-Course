@@ -1,0 +1,29 @@
+Fast Modular Exponentiation (1)
+
+def FastModularExponentiation(b, k, m):
+   for i in range(k):
+      b = (b * b) % m 
+   return b
+   
+   
+Fast Modular Exponentiation (2)
+ 
+def FastModularExponentiation_(b, k, m):
+   for i in range(k):
+      b = (b * b) % m 
+   return b
+   
+def FastModularExponentiation(b, e, m):
+    n = ""
+    answer = 1
+    while e != 0:
+        n = n + str(e % 2)
+        e = int(e // 2)
+    for i in range(len(n)):
+        if n[i] == '1':
+            ans*=FastModularExponentiation_(b,i,m)
+        ans = ans % m
+    return ans
+
+
+print(FastModularExponentiation(7,128,11))
